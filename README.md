@@ -6,4 +6,4 @@
 
 <h1 align="center">Wedeater's 4Th Path Ninja</h1>
 <h3 align="center"><a href="https://github.com/doombubbles/paths-plus-plus">THIS MOD REQUIRES PATHS++</a></h3>
-(https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/banner.png)](https://github.com/gurrenm3/BTD-Mod-Helper#readme)
+[![Requires BTD6 Mod Helper](https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/banner.png)](https://github.com/gurrenm3/BTD-Mod-Helper#readme)
