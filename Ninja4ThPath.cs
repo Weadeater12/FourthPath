@@ -76,6 +76,7 @@ public class Ninja4ThPathMod : BloonsTD6Mod
             attackModel.weapons[0].projectile.display = new PrefabReference() { guidRef = GetDisplayGUID<NinjaT1Proj>() };
          
             if (IsHighestUpgrade(towerModel))
+
             {
                 towerModel.ApplyDisplay<NinjaT1Display>();
             }
@@ -302,7 +303,7 @@ public class Ninja4ThPathMod : BloonsTD6Mod
         public override string Icon => "T5NinjaIcon";
         public override string Portrait => "T5NinjaPortrait";
         public override string DisplayName => "True Light God";
-        public override string Description => "Light ball ans main shuriken get stronger";
+        public override string Description => "Light ball and main shuriken get stronger";
 
         public override void ApplyUpgrade(TowerModel towerModel, int tier)
         {

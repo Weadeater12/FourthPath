@@ -6,7 +6,6 @@ public static class ModHelperData
     public const string Name = "Ninja4ThPath";
 
     public const string Description = "4Th path true light god ninja monkey!!!";
-
-    public const string RepoOwner = "Weadeater";
-    public const string RepoName = "Ninja 4Th Path";
+    public const string RepoOwner = "Weadeater12";
+    public const string RepoName = "4ThPathNinjaMonkey";
 }
