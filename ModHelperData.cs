@@ -1,12 +1,12 @@
-namespace Ninja4ThPath;
+namespace FourthPath;
 
 public static class ModHelperData
 {
-    public const string Version = "1.0.0";
-    public const string Name = "Ninja4ThPath";
+    public const string Version = "1.1.0";
+    public const string Name = "FourthPath";
 
-    public const string Description = "4Th path true light god ninja monkey!!!";
+    public const string Description = "Add multiple fourth path tower";
     public const string RepoOwner = "Weadeater12";
-    public const string RepoName = "4ThPathNinjaMonkey";
-    public const string WorksOnVersion = "36.3";
+    public const string RepoName = "FourthPath";
+    public const string WorksOnVersion = "37.0";
 }
