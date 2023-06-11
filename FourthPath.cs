@@ -35,6 +35,7 @@ using Il2CppAssets.Scripts.Models.Towers.Behaviors.Attack;
 using Il2CppAssets.Scripts.Models.Bloons.Behaviors;
 using Il2CppAssets.Scripts.Unity.Display;
 using FourthPath;
+using static MelonLoader.MelonLogger;
 
 [assembly: MelonInfo(typeof(FourthPath.FourthPathMod), ModHelperData.Name, ModHelperData.Version, ModHelperData.RepoOwner)]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
@@ -61,6 +62,13 @@ public class FourthPathMod : BloonsTD6Mod
 
         public override int UpgradeCount => 5;
     }
+
+    public class FourthPathMS : PathPlusPlus
+    {
+        public override string Tower => TowerType.MonkeySub;
+
+        public override int UpgradeCount => 5;
+    }
     public class NinjaT1 : UpgradePlusPlus<FourthPathNM>
     {
         public override int Cost => 250;
@@ -75,7 +83,7 @@ public class FourthPathMod : BloonsTD6Mod
             var attackModel = towerModel.GetAttackModel();
             attackModel.weapons[0].projectile.GetDamageModel().immuneBloonProperties = BloonProperties.None;
             attackModel.weapons[0].projectile.display = new PrefabReference() { guidRef = GetDisplayGUID<NinjaT1Proj>() };
-         
+            attackModel.weapons[0].projectile.scale /= 2;
             if (IsHighestUpgrade(towerModel))
 
             {
@@ -100,7 +108,7 @@ public class FourthPathMod : BloonsTD6Mod
     {
 
         public override string BaseDisplay => Generic2dDisplay;
-        public override float Scale => 0.4f;
+        public override float Scale => 0.1f;
 
         public override void ModifyDisplayNode(UnityDisplayNode node)
         {
@@ -202,7 +210,7 @@ public class FourthPathMod : BloonsTD6Mod
     {
 
         public override string BaseDisplay => Generic2dDisplay;
-        public override float Scale => 0.5f;
+        public override float Scale => 0.25f;
 
         public override void ModifyDisplayNode(UnityDisplayNode node)
         {
@@ -290,7 +298,7 @@ public class FourthPathMod : BloonsTD6Mod
     {
 
         public override string BaseDisplay => Generic2dDisplay;
-        public override float Scale => 0.6f;
+        public override float Scale => 0.3f;
 
         public override void ModifyDisplayNode(UnityDisplayNode node)
         {
@@ -372,11 +380,249 @@ public class FourthPathMod : BloonsTD6Mod
     {
 
         public override string BaseDisplay => Generic2dDisplay;
-        public override float Scale => 0.65f;
+        public override float Scale => 0.3f;
 
         public override void ModifyDisplayNode(UnityDisplayNode node)
         {
             Set2DTexture(node, "LightShuriken");
+        }
+    }
+    public class SubT1 : UpgradePlusPlus<FourthPathMS>
+    {
+        public override int Cost => 250;
+        public override int Tier => 1;
+        public override string Icon => VanillaSprites.KnockbackUpgradeIcon;
+        public override string Portrait => "";
+        public override string DisplayName => "Knockback";
+        public override string Description => "Knockback Bloons for more safety";
+
+        public override void ApplyUpgrade(TowerModel towerModel, int tier)
+        {
+            var attackModel = towerModel.GetAttackModel();
+            //attackModel.weapons[0].projectile.display = new PrefabReference() { guidRef = GetDisplayGUID<NinjaT1Proj>() };
+            var knockback = Game.instance.model.GetTowerFromId("NinjaMonkey-010").GetDescendant<WindModel>().Duplicate();
+            knockback.chance = 0.2f;
+            knockback.distanceMin *= 1.5f;
+            knockback.distanceMax *= 1.5f;
+            attackModel.weapons[0].projectile.AddBehavior(knockback);
+            if (IsHighestUpgrade(towerModel))
+
+            {
+                towerModel.ApplyDisplay<SubT1Display>();
+            }
+        }
+    }
+    public class SubT1Display : ModDisplay
+    {
+
+        public override string BaseDisplay => GetDisplay(TowerType.MonkeySub);
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            foreach (var renderer in node.genericRenderers)
+            {
+                renderer.material.mainTexture = GetTexture("T1Sub");
+
+            }
+        }
+    }
+    public class SubT2 : UpgradePlusPlus<FourthPathMS>
+    {
+        public override int Cost => 150;
+        public override int Tier => 2;
+        public override string Icon => VanillaSprites.AdvancedTargetingUpgradeIcon;
+        public override string Portrait => "";
+        public override string DisplayName => "Developped Smell";
+        public override string Description => "Feel the presence of camo Bloons and command his darts to pop them!";
+
+        public override void ApplyUpgrade(TowerModel towerModel, int tier)
+        {
+            var attackModel = towerModel.GetAttackModel();
+            //attackModel.weapons[0].projectile.display = new PrefabReference() { guidRef = GetDisplayGUID<NinjaT1Proj>() };
+            attackModel.GetDescendants<FilterInvisibleModel>().ForEach(model => model.isActive = false);
+            if (IsHighestUpgrade(towerModel))
+
+            {
+                towerModel.ApplyDisplay<SubT2Display>();
+            }
+        }
+    }
+    public class SubT2Display : ModDisplay
+    {
+
+        public override string BaseDisplay => GetDisplay(TowerType.MonkeySub);
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            foreach (var renderer in node.genericRenderers)
+            {
+                renderer.material.mainTexture = GetTexture("T2Sub");
+
+            }
+        }
+    }
+    public class SubT3 : UpgradePlusPlus<FourthPathMS>
+    {
+        public override int Cost => 900;
+        public override int Tier => 3;
+        public override string Icon => VanillaSprites.ArmorPiercingDartsUpgradeIcon;
+        public override string Portrait => "";
+        public override string DisplayName => "Straight Shot";
+        public override string Description => "No longer have a homing effect but deal more damage";
+
+        public override void ApplyUpgrade(TowerModel towerModel, int tier)
+        {
+            var attackModel = towerModel.GetAttackModel();
+            attackModel.weapons[0].projectile.display = new PrefabReference() { guidRef = GetDisplayGUID<SubT3Proj>() };
+            
+            attackModel.weapons[0].projectile.RemoveBehavior<TrackTargetModel>();
+            attackModel.weapons[0].rate *= 0.85f;
+            attackModel.weapons[0].projectile.GetDamageModel().damage += 1;
+            attackModel.weapons[0].projectile.pierce += 2f;
+            if (IsHighestUpgrade(towerModel))
+
+            {
+                towerModel.ApplyDisplay<SubT3Display>();
+            }
+        }
+    }
+    public class SubT3Display : ModDisplay
+    {
+
+        public override string BaseDisplay => GetDisplay(TowerType.MonkeySub);
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            foreach (var renderer in node.genericRenderers)
+            {
+                renderer.material.mainTexture = GetTexture("T3Sub");
+
+            }
+        }
+    }
+    public class SubT3Proj : ModDisplay
+    {
+
+        public override string BaseDisplay => Generic2dDisplay;
+        public override float Scale => 1.1f;
+
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            Set2DTexture(node, "T3SubProj");
+        }
+    }
+    public class SubT4 : UpgradePlusPlus<FourthPathMS>
+    {
+        public override int Cost => 5000;
+        public override int Tier => 4;
+        public override string Icon => VanillaSprites.TwinGunsUpgradeIcon;
+        public override string Portrait => "";
+        public override string DisplayName => "Machine Gun";
+        public override string Description => "Add a machine gun that deal extra damage.";
+
+        public override void ApplyUpgrade(TowerModel towerModel, int tier)
+        {
+            var attackModel = towerModel.GetAttackModel();
+            //attackModel.weapons[0].projectile.display = new PrefabReference() { guidRef = GetDisplayGUID<NinjaT1Proj>() };
+
+            attackModel.weapons[0].projectile.RemoveBehavior<TrackTargetModel>();
+            attackModel.weapons[0].projectile.GetDamageModel().damage += 1;
+            attackModel.weapons[0].projectile.pierce += 1f;
+            towerModel.range += 6;
+            attackModel.range += 6;
+            var machinegun = Game.instance.model.GetTowerFromId("SniperMonkey-100").GetAttackModel().Duplicate();
+            machinegun.range = towerModel.range *= 1.3f;
+            machinegun.weapons[0].rate = 0.035f;
+            machinegun.weapons[0].projectile.GetDamageModel().damage = 1;
+            machinegun.GetDescendants<FilterInvisibleModel>().ForEach(model => model.isActive = false);
+            machinegun.name = "machinegun";
+            towerModel.AddBehavior(machinegun);
+            if (IsHighestUpgrade(towerModel))
+
+            {
+                towerModel.ApplyDisplay<SubT4Display>();
+            }
+        }
+    }
+    public class SubT4Display : ModDisplay
+    {
+
+        public override string BaseDisplay => GetDisplay(TowerType.MonkeySub, 0 ,4 ,0);
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            foreach (var renderer in node.genericRenderers)
+            {
+                renderer.material.mainTexture = GetTexture("T4Sub");
+                SetMeshOutlineColor(node, new UnityEngine.Color(65f / 255, 105f / 255, 225f / 255));
+            }
+        }
+    }
+    public class SubT5 : UpgradePlusPlus<FourthPathMS>
+    {
+        public override int Cost => 55000;
+        public override int Tier => 5;
+        public override string Icon => VanillaSprites.PlasmaAcceleratorUpgradeIcon;
+        public override string Portrait => "";
+        public override string DisplayName => "Missile Luncher";
+        public override string Description => "Every few seconds, lunch a missile luncher";
+
+        public override void ApplyUpgrade(TowerModel towerModel, int tier)
+        {
+            var attackModel = towerModel.GetAttackModel();
+            attackModel.weapons[0].projectile.display = new PrefabReference() { guidRef = GetDisplayGUID<SubT5Proj>() };
+            attackModel.weapons[0].rate *= 0.15f;
+            attackModel.weapons[0].projectile.pierce *= 2;
+            attackModel.weapons[0].projectile.GetDamageModel().damage *= 3f;
+
+
+
+            var machinegun = towerModel.GetAttackModel("machinegun");
+            machinegun.range *= 1.5f;          
+            machinegun.weapons[0].rate *= 0.8f;
+            machinegun.weapons[0].projectile.GetDamageModel().damage += 2;
+            towerModel.AddBehavior(machinegun);
+            var missile = Game.instance.model.GetTowerFromId("MonkeySub-020").GetAttackModel().Duplicate();
+            missile.weapons[0].rate = 3.5f;
+            missile.weapons[0].projectile.pierce = 1;
+            missile.weapons[0].projectile.GetDamageModel().damage = 50;
+            missile.GetDescendants<FilterInvisibleModel>().ForEach(model => model.isActive = false);
+            missile.range = 999999999;
+            var Bomb = Game.instance.model.GetTowerFromId("BombShooter-500").GetAttackModel().weapons[0].projectile.GetBehavior<CreateProjectileOnContactModel>().Duplicate();
+            var Radius = Game.instance.model.GetTowerFromId("BombShooter-500").GetAttackModel().weapons[0].projectile.GetBehavior<CreateEffectOnContactModel>().Duplicate();
+            Bomb.projectile.GetBehavior<DamageModel>().damage = 250f;
+            Bomb.GetDescendants<FilterInvisibleModel>().ForEach(model => model.isActive = false);
+            Bomb.projectile.GetBehavior<DamageModel>().immuneBloonProperties = BloonProperties.None;
+            missile.weapons[0].projectile.AddBehavior(Bomb);
+            missile.weapons[0].projectile.AddBehavior(Radius);
+            missile.name = "missile";
+            missile.weapons[0].projectile.AddBehavior(Game.instance.model.GetTowerFromId("BombShooter-500").GetAttackModel().weapons[0].projectile.GetBehavior<CreateSoundOnProjectileCollisionModel>().Duplicate());
+            towerModel.AddBehavior(missile);
+            if (IsHighestUpgrade(towerModel))
+
+            {
+                towerModel.ApplyDisplay<SubT5Display>();
+            }
+        }
+    }
+    public class SubT5Display : ModDisplay
+    {
+
+       public override string BaseDisplay => GetDisplay(TowerType.MonkeySub, 0, 4, 0);
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            foreach (var renderer in node.genericRenderers)
+            {
+                renderer.material.mainTexture = GetTexture("T5Sub");
+                SetMeshOutlineColor(node, new UnityEngine.Color(100f / 255, 0f / 255, 50f / 255));
+            }
+        }
+    }
+    public class SubT5Proj : ModDisplay
+    {
+
+        public override string BaseDisplay => Generic2dDisplay;
+        public override float Scale => 1.3f;
+
+        public override void ModifyDisplayNode(UnityDisplayNode node)
+        {
+            Set2DTexture(node, "T5SubProj");
         }
     }
 }
